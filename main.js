@@ -98,7 +98,7 @@ function Rocket(x, y) {
         if (!this.dead) {
             fitness = Math.pow(1000 / Vector.difference(this.position, target.position).magnitude, 1.5);
         } else {
-            fitness = 1000 / Vector.difference(this.position, target.position).magnitude;
+            fitness = 1000 / Vector.difference(this.position, Vector.sum(target.position, (new Vector(target.width, target.height).multipliedBy(0.5)))).magnitude;
         }
         if (this.success) fitness *= 3;
         if (fitness > this.fitness) this.fitness = fitness;
@@ -230,3 +230,49 @@ function animate() {
 }
 
 animate();
+
+// Drag obstacles:
+//-------------------------------------------------------- //
+window.addEventListener("mousedown", e => {
+    let mouseX = e.offsetX;
+    let mouseY = e.offsetY;
+    obstacles.forEach(o => {
+        if (mouseX > o.position.x           &&
+            mouseY > o.position.y           &&
+            mouseX < o.position.x + o.width &&
+            mouseY < o.position.y + o.height) {
+            o.dragging = true;
+            o.dragOffset = Vector.difference(o.position, new Vector(mouseX, mouseY));
+        }
+    });
+    if (mouseX > target.position.x                  &&
+        mouseY > target.position.y                  &&
+        mouseX < target.position.x + target.width   &&
+        mouseY < target.position.y + target.height) {
+        target.dragging = true;
+        target.dragOffset = Vector.difference(target.position, new Vector(mouseX, mouseY));
+    }
+});
+
+window.addEventListener("mousemove", e => {
+    let mouseX = e.offsetX;
+    let mouseY = e.offsetY;
+    obstacles.forEach(o => {
+        if (o.dragging) {
+            o.position.x = mouseX;
+            o.position.y = mouseY;
+            o.position.add(o.dragOffset);
+        }
+    })
+    if (target.dragging) {
+        target.position.x = mouseX;
+        target.position.y = mouseY;
+        target.position.add(target.dragOffset);
+    }
+});
+
+window.addEventListener("mouseup", e => {
+    obstacles.forEach(o => o.dragging = false);
+    target.dragging = false;
+});
+//-------------------------------------------------------- //
