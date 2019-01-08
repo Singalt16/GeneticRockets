@@ -1,7 +1,6 @@
 /**
  * @class Vector
- * A 2D vector with an x and y component.
- * Body properties such as position, velocity, etc. are all represented with vectors.
+ * A 2D vector with an x and y component
  *
  * Properties:
  * @property {number} x: the x (horizontal) component of the vector
